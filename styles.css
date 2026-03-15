@@ -1,0 +1,300 @@
+/* ── Aura Extension Styles ── */
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+
+#aura-root {
+  --aura-bg: #0a0a0f;
+  --aura-surface: #13131a;
+  --aura-border: rgba(255,255,255,0.08);
+  --aura-accent: #7c6bff;
+  --aura-accent-glow: rgba(124, 107, 255, 0.35);
+  --aura-text: #f0eeff;
+  --aura-muted: #888899;
+  --aura-success: #4fffb0;
+  --aura-radius: 16px;
+  --aura-shadow: 0 8px 40px rgba(0,0,0,0.6), 0 0 0 1px var(--aura-border);
+
+  all: initial;
+  font-family: 'DM Sans', sans-serif;
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 2147483647;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+/* ── FAB Button ── */
+#aura-fab {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7c6bff, #a78bfa);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px var(--aura-accent-glow), 0 2px 8px rgba(0,0,0,0.4);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+}
+
+#aura-fab:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 28px var(--aura-accent-glow), 0 2px 8px rgba(0,0,0,0.4);
+}
+
+#aura-fab:active {
+  transform: scale(0.96);
+}
+
+#aura-fab svg {
+  width: 22px;
+  height: 22px;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+#aura-fab.open svg {
+  transform: rotate(45deg);
+}
+
+/* pulse ring when idle */
+#aura-fab::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid var(--aura-accent);
+  opacity: 0;
+  animation: aura-pulse 2.5s ease-out infinite;
+}
+
+@keyframes aura-pulse {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+/* ── Feature Menu ── */
+#aura-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-end;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(12px) scale(0.95);
+  transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+#aura-menu.visible {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateY(0) scale(1);
+}
+
+.aura-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px 10px 12px;
+  background: var(--aura-surface);
+  border: 1px solid var(--aura-border);
+  border-radius: 40px;
+  cursor: pointer;
+  color: var(--aura-text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  box-shadow: var(--aura-shadow);
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+  animation: aura-slide-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.aura-action-btn:nth-child(1) { animation-delay: 0.03s; }
+.aura-action-btn:nth-child(2) { animation-delay: 0.07s; }
+.aura-action-btn:nth-child(3) { animation-delay: 0.11s; }
+.aura-action-btn:nth-child(4) { animation-delay: 0.15s; }
+
+@keyframes aura-slide-in {
+  from { opacity: 0; transform: translateX(8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.aura-action-btn:hover {
+  background: rgba(124, 107, 255, 0.15);
+  border-color: rgba(124, 107, 255, 0.4);
+  transform: translateX(-2px);
+}
+
+.aura-action-btn:active {
+  transform: scale(0.97);
+}
+
+.aura-action-btn .aura-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.aura-action-btn[data-action="summarize"] .aura-icon { background: rgba(79, 255, 176, 0.15); }
+.aura-action-btn[data-action="explain"]   .aura-icon { background: rgba(124, 107, 255, 0.2); }
+.aura-action-btn[data-action="reply"]     .aura-icon { background: rgba(255, 183, 77, 0.15); }
+.aura-action-btn[data-action="post"]      .aura-icon { background: rgba(96, 165, 250, 0.15); }
+
+/* ── Result Panel ── */
+#aura-panel {
+  width: 340px;
+  background: var(--aura-surface);
+  border: 1px solid var(--aura-border);
+  border-radius: var(--aura-radius);
+  box-shadow: var(--aura-shadow);
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(10px) scale(0.97);
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  max-height: 420px;
+  display: flex;
+  flex-direction: column;
+}
+
+#aura-panel.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: all;
+}
+
+#aura-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid var(--aura-border);
+  flex-shrink: 0;
+}
+
+#aura-panel-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--aura-accent);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+#aura-panel-close {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--aura-muted);
+  transition: background 0.15s, color 0.15s;
+  font-size: 16px;
+  line-height: 1;
+}
+
+#aura-panel-close:hover {
+  background: rgba(255,255,255,0.08);
+  color: var(--aura-text);
+}
+
+#aura-panel-body {
+  padding: 16px;
+  overflow-y: auto;
+  flex: 1;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(124,107,255,0.3) transparent;
+}
+
+#aura-panel-body::-webkit-scrollbar { width: 4px; }
+#aura-panel-body::-webkit-scrollbar-thumb { background: rgba(124,107,255,0.3); border-radius: 2px; }
+
+#aura-result {
+  color: var(--aura-text);
+  font-size: 13.5px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Loading dots */
+.aura-loading {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 0;
+}
+
+.aura-loading span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--aura-accent);
+  animation: aura-bounce 1.2s ease-in-out infinite;
+}
+
+.aura-loading span:nth-child(2) { animation-delay: 0.2s; }
+.aura-loading span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes aura-bounce {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+/* Error state */
+.aura-error {
+  color: #ff6b8a;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* Copy button */
+#aura-copy-btn {
+  margin-top: 12px;
+  padding: 7px 14px;
+  background: rgba(124, 107, 255, 0.15);
+  border: 1px solid rgba(124, 107, 255, 0.3);
+  border-radius: 8px;
+  color: var(--aura-accent);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+#aura-copy-btn:hover {
+  background: rgba(124, 107, 255, 0.25);
+  border-color: rgba(124, 107, 255, 0.5);
+}
+
+/* Settings hint */
+#aura-settings-hint {
+  padding: 10px 16px;
+  border-top: 1px solid var(--aura-border);
+  font-size: 11px;
+  color: var(--aura-muted);
+  text-align: center;
+  flex-shrink: 0;
+}
+
+#aura-settings-hint a {
+  color: var(--aura-accent);
+  cursor: pointer;
+  text-decoration: none;
+}

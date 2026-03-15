@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Aura</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      width: 280px;
+      background: #0a0a0f;
+      color: #f0eeff;
+      font-family: 'DM Sans', sans-serif;
+      padding: 20px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #7c6bff, #a78bfa);
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .logo-text {
+      font-family: 'Syne', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      background: linear-gradient(90deg, #f0eeff, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .tagline {
+      font-size: 12px;
+      color: #888899;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    label {
+      display: block;
+      font-size: 11px;
+      font-weight: 500;
+      color: #888899;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+
+    input {
+      width: 100%;
+      background: #13131a;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 9px 12px;
+      color: #f0eeff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      outline: none;
+      margin-bottom: 14px;
+      transition: border-color 0.15s;
+    }
+
+    input:focus {
+      border-color: rgba(124,107,255,0.5);
+    }
+
+    input::placeholder {
+      color: #555566;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background: linear-gradient(135deg, #7c6bff, #a78bfa);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.15s;
+      margin-bottom: 12px;
+    }
+
+    button:hover { opacity: 0.9; transform: translateY(-1px); }
+    button:active { transform: scale(0.98); }
+
+    #save-status {
+      font-size: 12px;
+      color: #4fffb0;
+      text-align: center;
+      height: 16px;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      margin: 16px 0;
+    }
+
+    .features-list {
+      list-style: none;
+    }
+
+    .features-list li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: #888899;
+      padding: 4px 0;
+    }
+
+    .features-list li span:first-child {
+      color: #7c6bff;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="logo">
+    <div class="logo-icon">✦</div>
+    <span class="logo-text">Aura</span>
+  </div>
+
+  <p class="tagline">AI superpowers on every page. Click the floating button to get started.</p>
+
+  <label>Nova API Endpoint</label>
+  <input type="url" id="api-url" placeholder="https://your-nova-api.com/v1/chat"/>
+
+  <label>API Key (optional)</label>
+  <input type="password" id="api-key" placeholder="sk-..."/>
+
+  <button id="save-btn">Save Settings</button>
+  <div id="save-status"></div>
+
+  <hr class="divider"/>
+
+  <ul class="features-list">
+    <li><span>✦</span><span>Summarize any article or doc</span></li>
+    <li><span>⌥</span><span>Explain code on GitHub & Stack Overflow</span></li>
+    <li><span>↩</span><span>Draft replies on LinkedIn</span></li>
+    <li><span>✐</span><span>Generate LinkedIn post ideas</span></li>
+  </ul>
+
+  <script src="popup.js"></script>
+</body>
+</html>
