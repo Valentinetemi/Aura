@@ -231,40 +231,37 @@ async function callNova(prompt, isFollowUp = false) {
         const output = await callNova(prompt);
 
         result.innerHTML = `
-  <div id="aura-result-text"></div>
-  <button id="aura-copy-btn" style="opacity:0">Copy</button>
-`;
-
-const textEl = result.querySelector('#aura-result-text');
-const copyBtn = result.querySelector('#aura-copy-btn');
-
-// Stream words in one by one
-const words = output.split(' ');
-let i = 0;
-let revealed = '';
-
-const interval = setInterval(() => {
-  if (i >= words.length) {
-    clearInterval(interval);
-    // Render final formatted version
-    textEl.innerHTML = formatOutput(output);
-    // Show copy button
-    copyBtn.style.opacity = '1';
-    copyBtn.style.transition = 'opacity 0.4s ease';
-    return;
-  }
-  revealed += (i === 0 ? '' : ' ') + words[i];
-  textEl.textContent = revealed;
-  i += 5; // reveal 3 words at a time 
-}, 30); // every 30ms
-
-copyBtn.addEventListener('click', () => {
-  navigator.clipboard.writeText(output);
-  copyBtn.textContent = 'Copied ✓';
-  setTimeout(() => {
-    if (copyBtn) copyBtn.textContent = 'Copy';
-  }, 2000);
-});
+        <div id="aura-result-text"></div>
+        <button id="aura-copy-btn" style="opacity:0">Copy</button>
+      `;
+      
+      const textEl = result.querySelector('#aura-result-text');
+      const copyBtn = result.querySelector('#aura-copy-btn');
+      
+      // Typing animation
+      const words = output.split(' ');
+      let i = 0;
+      let revealed = '';
+      
+      const interval = setInterval(() => {
+        if (i >= words.length) {
+          clearInterval(interval);
+          textEl.innerHTML = formatOutput(output);
+          copyBtn.style.opacity = '1';
+          copyBtn.style.transition = 'opacity 0.4s ease';
+          showChatInput(); // show chat after response loads
+          return;
+        }
+        revealed += (i === 0 ? '' : ' ') + words[i];
+        textEl.textContent = revealed;
+        i += 3;
+      }, 30);
+      
+      copyBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(output);
+        copyBtn.textContent = 'Copied ✓';
+        setTimeout(() => { if (copyBtn) copyBtn.textContent = 'Copy'; }, 2000);
+      });
 
       } catch (err) {
         result.innerHTML = `
