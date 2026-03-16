@@ -23,7 +23,7 @@ const NOVA_API_KEY = '';
       label: 'Explain Code',
       icon: '⌥',
       prompt: (content) =>
-        `Explain the code on this page in simple, clear terms. Describe what it does, how it works, and any important patterns used.\n\n${content}`,
+        `Explain the code on this page in simple, clear terms. Describe what it does, how it works, and any important patterns used. Maximum 150 words.\n\n${content}`,
     },
     {
       action: 'reply',
