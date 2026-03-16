@@ -79,7 +79,7 @@ const NOVA_API_KEY = '';
 
   document.body.appendChild(root);
 
-  // ── Element refs ──
+  // -- Element refs --
   const fab       = root.querySelector('#aura-fab');
   const menu      = root.querySelector('#aura-menu');
   const panel     = root.querySelector('#aura-panel');
@@ -89,7 +89,7 @@ const NOVA_API_KEY = '';
 
   let menuOpen = false;
 
-  // ── Draggable FAB ──
+  //  -- Draggable FAB --
 let isDragging = false;
 let dragOffsetX = 0;
 let dragOffsetY = 0;
@@ -124,7 +124,7 @@ fab.addEventListener('click', (e) => {
   }
 });
 
-  // ── Toggle menu ──
+  // -- Toggle menu --
   fab.addEventListener('click', () => {
     menuOpen = !menuOpen;
     fab.classList.toggle('open', menuOpen);
@@ -132,16 +132,16 @@ fab.addEventListener('click', (e) => {
     if (!menuOpen) closePanel();
   });
 
-  // ── Close panel ──
+  // --Close panel --
   closeBtn.addEventListener('click', closePanel);
 
   function closePanel() {
     panel.classList.remove('visible');
   }
 
-  // ── Get page content ──
+  // -- Get page content --
   function getPageContent() {
-    // Try to get meaningful text — skip nav/footer noise
+    // Try to get meaningful text — skipping nav/footer noise
     const selectors = [
       'article', 'main', '.content', '#content',
       '.post-body', '.article-body', 'pre code', '.readme'
@@ -202,7 +202,7 @@ async function callNova(prompt, isFollowUp = false) {
 }
 
 
-  // ── Handle feature click ──
+  // ─ Handle feature click ─
   root.querySelectorAll('.aura-action-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
       const action = btn.dataset.action;
@@ -274,7 +274,7 @@ async function callNova(prompt, isFollowUp = false) {
     });
   });
 
-  // ── Chat input ──
+  // ─ Chat input ─
 function showChatInput() {
   // Remove existing chat input if any
   const existing = root.querySelector('#aura-chat-input-wrap');
