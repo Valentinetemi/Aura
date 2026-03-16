@@ -72,6 +72,11 @@ const NOVA_API_KEY = '';
           <span>${f.label}</span>
         </button>
       `).join('')}
+      <button class="aura-action-btn" id="aura-notes-btn">
+    <span class="aura-icon">📝</span>
+    <span>My Notes</span>
+  </button>
+
     </div>
 
     <!-- FAB -->
