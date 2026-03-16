@@ -446,6 +446,48 @@
     panel.classList.add('visible');
   });
 
+  // -- Daily Motivation Splash --
+const MOTIVATION = [
+  { quote: "The secret of getting ahead is getting started.", author: "Mark Twain" },
+  { quote: "Don't watch the clock. Do what it does — keep going.", author: "Sam Levenson" },
+  { quote: "It always seems impossible until it's done.", author: "Nelson Mandela" },
+  { quote: "You don't have to be great to start, but you have to start to be great.", author: "Zig Ziglar" },
+  { quote: "Build things people want. Everything else is noise.", author: "Aura" },
+  { quote: "Code is poetry. Ship the poem.", author: "Aura" },
+  { quote: "Every expert was once a beginner who refused to quit.", author: "Unknown" },
+];
+
+function showMotivationSplash() {
+  const today = new Date().toDateString();
+  const lastShown = localStorage.getItem('aura-motivation-date');
+  if (lastShown === today) return;
+  localStorage.setItem('aura-motivation-date', today);
+
+  const item = MOTIVATION[Math.floor(Math.random() * MOTIVATION.length)];
+  const splash = document.createElement('div');
+  splash.id = 'aura-splash';
+  splash.innerHTML = `
+    <div id="aura-splash-inner">
+      <div id="aura-splash-orb">🔮</div>
+      <div id="aura-splash-quote">"${item.quote}"</div>
+      <div id="aura-splash-author">— ${item.author}</div>
+      <div id="aura-splash-hint">Click anywhere to dismiss</div>
+    </div>
+  `;
+  document.body.appendChild(splash);
+  requestAnimationFrame(() => { splash.style.opacity = '1'; });
+  setTimeout(() => {
+    splash.style.opacity = '0';
+    setTimeout(() => splash.remove(), 600);
+  }, 4000);
+  splash.addEventListener('click', () => {
+    splash.style.opacity = '0';
+    setTimeout(() => splash.remove(), 600);
+  });
+}
+
+setTimeout(showMotivationSplash, 1000);
+
   // -- Helpers --
   function escapeHtml(str) {
     return str
@@ -465,5 +507,6 @@
       .replace(/\n\n/g, '<br/><br/>')
       .replace(/\n/g, '<br/>');
   }
+
 
 })();
