@@ -349,7 +349,7 @@ async function handleFollowUp(message) {
     aiBubble.innerHTML = `<span class="aura-error">⚠ ${escapeHtml(err.message)}</span>`;
   }
 }
-  // ── Helpers ──
+  // ─ Helpers ─
   function escapeHtml(str) {
     return str
       .replace(/&/g, '&amp;')
@@ -375,7 +375,7 @@ async function handleFollowUp(message) {
       .replace(/\n/g, '<br/>');
   }
 
-  // ── Rotating quotes ──
+  // ─ Rotating quotes ─
 const QUOTES = [
   "🔮 Think less. Know more.",
   "⚡ Your AI layer on every page.",
@@ -390,5 +390,102 @@ if (quoteEl) {
   quoteEl.textContent = QUOTES[Math.floor(Math.random() * QUOTES.length)];
 }
 
+// ─ Highlight & Ask ─
+const highlightBtn = document.createElement('div');
+highlightBtn.id = 'aura-highlight-btn';
+highlightBtn.innerHTML = '🔮 Ask Aura';
+document.body.appendChild(highlightBtn);
+
+document.addEventListener('mouseup', (e) => {
+  // Don't trigger inside aura panel
+  if (root.contains(e.target)) return;
+
+  setTimeout(() => {
+    const selection = window.getSelection();
+    const selectedText = selection?.toString().trim();
+
+    if (!selectedText || selectedText.length < 5) {
+      highlightBtn.style.display = 'none';
+      return;
+    }
+
+    // Position the button near the selection
+    const range = selection.getRangeAt(0);
+    const rect = range.getBoundingClientRect();
+
+    highlightBtn.style.display = 'flex';
+    highlightBtn.style.top = `${window.scrollY + rect.top - 44}px`;
+    highlightBtn.style.left = `${window.scrollX + rect.left + rect.width / 2 - 60}px`;
+    highlightBtn.dataset.text = selectedText;
+  }, 10);
+});
+
+// Hide on click outside
+document.addEventListener('mousedown', (e) => {
+  if (e.target !== highlightBtn) {
+    highlightBtn.style.display = 'none';
+  }
+});
+
+highlightBtn.addEventListener('click', () => {
+  const selected = highlightBtn.dataset.text;
+  highlightBtn.style.display = 'none';
+
+  // Open panel with selected text
+  panelTitle.textContent = 'Ask Aura';
+  result.innerHTML = `
+    <div class="aura-highlight-quote">"${escapeHtml(selected.slice(0, 120))}${selected.length > 120 ? '...' : ''}"</div>
+    <div class="aura-loading"><span></span><span></span><span></span></div>
+  `;
+  panel.classList.add('visible');
+
+  // Reset history for fresh context
+  conversationHistory = [];
+  currentPageContent = selected;
+
+  callNova(`The user selected this text on a webpage: "${selected}"\n\nExplain it clearly, give context, and share any key insight about it. Be concise and direct.`)
+    .then(output => {
+      const loadingEl = result.querySelector('.aura-loading');
+      if (loadingEl) loadingEl.remove();
+
+      const responseEl = document.createElement('div');
+      responseEl.id = 'aura-result-text';
+      result.appendChild(responseEl);
+
+      const copyBtn = document.createElement('button');
+      copyBtn.id = 'aura-copy-btn';
+      copyBtn.style.opacity = '0';
+      copyBtn.textContent = 'Copy';
+      result.appendChild(copyBtn);
+
+      // Typing animation
+      const words = output.split(' ');
+      let i = 0;
+      let revealed = '';
+
+      const interval = setInterval(() => {
+        if (i >= words.length) {
+          clearInterval(interval);
+          responseEl.innerHTML = formatOutput(output);
+          copyBtn.style.opacity = '1';
+          copyBtn.style.transition = 'opacity 0.4s ease';
+          showChatInput();
+          return;
+        }
+        revealed += (i === 0 ? '' : ' ') + words[i];
+        responseEl.textContent = revealed;
+        i += 3;
+      }, 30);
+
+      copyBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(output);
+        copyBtn.textContent = 'Copied ✓';
+        setTimeout(() => { if (copyBtn) copyBtn.textContent = 'Copy'; }, 2000);
+      });
+    })
+    .catch(err => {
+      result.innerHTML = `<div class="aura-error">⚠ ${escapeHtml(err.message)}</div>`;
+    });
+});
 
 })();
