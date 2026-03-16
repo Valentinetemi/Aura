@@ -16,14 +16,14 @@ const NOVA_API_KEY = '';
       label: 'Summarize Page',
       icon: '✦',
       prompt: (content) =>
-        `Summarize the following webpage content clearly and concisely. Use bullet points for key takeaways. Maximum 400 words. Go straight into the bullet points, no intro sentence.\n\n${content}`,
+        `Summarize the following webpage content clearly and concisely. Use bullet points for key takeaways. Go straight into the bullet points, no intro sentence.\n\n${content}`,
     },
     {
       action: 'explain',
       label: 'Explain Code',
       icon: '⌥',
       prompt: (content) =>
-        `Explain the code on this page in simple, clear terms. Describe what it does, how it works, and any important patterns used. Maximum 150 words.\n\n${content}`,
+        `Explain the code on this page in simple, clear terms. Describe what it does, how it works, and any important patterns used..\n\n${content}`,
     },
     {
       action: 'reply',
