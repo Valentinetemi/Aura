@@ -12,6 +12,9 @@ const NOVA_API_KEY = '';
  let conversationHistory = []
  let currentPageContent = '';
 
+ // -- save to note --
+ let savedNotes = JSON.parse(localStorage.getItem('aura-notes') || '[]');
+
   // -- Feature definitions --
   const FEATURES = [
     {
@@ -232,11 +235,15 @@ async function callNova(prompt, isFollowUp = false) {
 
         result.innerHTML = `
         <div id="aura-result-text"></div>
-        <button id="aura-copy-btn" style="opacity:0">Copy</button>
+        <div class="aura-action-row" style="opacity:0">
+          <button id="aura-copy-btn">Copy</button>
+          <button id="aura-save-btn">Save Note</button>
+        </div>
       `;
       
       const textEl = result.querySelector('#aura-result-text');
       const copyBtn = result.querySelector('#aura-copy-btn');
+      const saveBtn = result.querySelector('#aura-save-btn');
       
       // Typing animation
       const words = output.split(' ');
@@ -247,8 +254,9 @@ async function callNova(prompt, isFollowUp = false) {
         if (i >= words.length) {
           clearInterval(interval);
           textEl.innerHTML = formatOutput(output);
-          copyBtn.style.opacity = '1';
-          copyBtn.style.transition = 'opacity 0.4s ease';
+          const actionRow = result.querySelector('.aura-action-row');
+          actionRow.style.opacity = '1';
+          actionRow.style.transition = 'opacity 0.4s ease';
           showChatInput(); // show chat after response loads
           return;
         }
@@ -262,6 +270,20 @@ async function callNova(prompt, isFollowUp = false) {
         copyBtn.textContent = 'Copied ✓';
         setTimeout(() => { if (copyBtn) copyBtn.textContent = 'Copy'; }, 2000);
       });
+      saveBtn.addEventListener('click', () => {
+        const note = {
+          id: Date.now(),
+          feature: panelTitle.textContent,
+          content: output,
+          url: window.location.href,
+          date: new Date().toLocaleDateString(),
+        };
+        savedNotes.unshift(note);
+        localStorage.setItem('aura-notes', JSON.stringify(savedNotes));
+        saveBtn.textContent = 'Saved ✓';
+        setTimeout(() => { if (saveBtn) saveBtn.textContent = 'Save Note'; }, 2000);
+      });
+      
 
       } catch (err) {
         result.innerHTML = `
