@@ -399,6 +399,11 @@
   color: var(--aura-muted);
   text-align: center;
   flex-shrink: 0;
+  transition: opacity 0.6s ease;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 #aura-settings-hint a {
