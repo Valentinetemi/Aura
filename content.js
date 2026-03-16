@@ -19,7 +19,7 @@
       label: 'Summarize Page',
       icon: '✦',
       prompt: (content) =>
-        `Summarize the following webpage content using bullet points for key takeaways. Maximum 200 words. Go straight into the bullet points, no intro sentence.\n\n${content}`,
+        `Summarize the following webpage content using bullet points for key takeaways. Go straight into the bullet points, no intro sentence.\n\n${content}`,
     },
     {
       action: 'explain',
