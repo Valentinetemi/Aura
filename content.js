@@ -155,7 +155,7 @@ fab.addEventListener('click', (e) => {
     return document.body.innerText.trim().slice(0, 4000);
   }
 
-  // ── Call Nova API ──
+  // ── Call Nova -- lol didn't later use nova but cloudfare
   async function callNova(prompt) {
     // Always read latest config from storage
     const apiUrl = NOVA_API_URL;
@@ -183,7 +183,6 @@ fab.addEventListener('click', (e) => {
 
     const data = await response.json();
 
-    // 🔧 Adjust this based on your Nova API response shape
     return data.response || data.message || data.text || data.content || JSON.stringify(data);
   }
 
@@ -239,7 +238,7 @@ const interval = setInterval(() => {
   }
   revealed += (i === 0 ? '' : ' ') + words[i];
   textEl.textContent = revealed;
-  i += 3; // reveal 3 words at a time — feels fast but smooth
+  i += 5; // reveal 3 words at a time 
 }, 30); // every 30ms
 
 copyBtn.addEventListener('click', () => {
@@ -294,7 +293,7 @@ const QUOTES = [
   "✦ Built by Valentine.",
   "🌍 The future browses differently.",
   "💡 Curiosity, accelerated.",
-  " ⚡Less tabs. More answers.",
+  "⚡Less tabs. More answers.",
 ];
 
 const quoteEl = root.querySelector('#aura-settings-hint');
