@@ -100,7 +100,38 @@
     "⚡ Less tabs. More answers.",
   ];
   const quoteEl = root.querySelector('#aura-settings-hint');
-  if (quoteEl) quoteEl.textContent = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+  const MOTIVATION_FULL = [
+    { quote: "Think less. Know more.", author: "Aura" },
+    { quote: "The future browses differently.", author: "Aura" },
+    { quote: "Built by Valentine. Powered by curiosity.", author: "" },
+    { quote: "Getting started is the secret of getting ahead.", author: "Mark Twain" },
+    { quote: "It always seems impossible until it's done.", author: "Mandela" },
+    { quote: "Code is poetry. Ship the poem.", author: "Aura" },
+    { quote: "Every expert was once a beginner who refused to quit.", author: "" },
+    { quote: "Less tabs. More answers.", author: "Aura" },
+  ];
+  
+  let quoteIndex = Math.floor(Math.random() * MOTIVATION_FULL.length);
+  
+  function cycleQuote() {
+    if (!quoteEl) return;
+    // Fade out
+    quoteEl.style.opacity = '0';
+    setTimeout(() => {
+      quoteIndex = (quoteIndex + 1) % MOTIVATION_FULL.length;
+      const { quote, author } = MOTIVATION_FULL[quoteIndex];
+      quoteEl.textContent = author ? `"${quote}" — ${author}` : `"${quote}"`;
+      // Fade in
+      quoteEl.style.opacity = '1';
+    }, 600);
+  }
+  
+  // Set first quote immediately
+  const { quote: q0, author: a0 } = MOTIVATION_FULL[quoteIndex];
+  quoteEl.textContent = a0 ? `"${q0}" — ${a0}` : `"${q0}"`;
+  
+  // Cycle every 4 seconds
+  setInterval(cycleQuote, 4000);
 
   // -- Draggable FAB --
   let isDragging = false;
@@ -148,9 +179,6 @@
     if (chatWrap) chatWrap.remove();
     conversationHistory = [];
     currentPageContent = '';
-    // Refresh quote
-    if (quoteEl) quoteEl.textContent = QUOTES[Math.floor(Math.random() * QUOTES.length)];
-  }
 
   // -- Get page content --
   function getPageContent() {
