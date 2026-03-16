@@ -227,11 +227,40 @@
 #aura-result {
   color: var(--aura-text);
   font-size: 13.5px;
-  line-height: 1.7;
-  white-space: pre-wrap;
+  line-height: 1.7; 
+  white-space: normal;
   word-break: break-word;
+  overflow-wrap: break-word;
+}
+#aura-result-text ul {
+  padding-left: 16px;
+  margin: 8px 0;
 }
 
+#aura-result-text li {
+  color: var(--aura-text);
+  margin: 5px 0;
+  line-height: 1.6;
+}
+
+#aura-result-text li.numbered {
+  list-style: decimal;
+}
+
+#aura-result-text strong {
+  color: #a78bfa;
+  font-weight: 600;
+}
+
+#aura-result-text h4 {
+  color: var(--aura-accent);
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  margin: 12px 0 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
 /* Loading dots */
 .aura-loading {
   display: flex;
@@ -241,8 +270,8 @@
 }
 
 .aura-loading span {
-  width: 7px;
-  height: 7px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background: var(--aura-accent);
   animation: aura-bounce 1.2s ease-in-out infinite;
