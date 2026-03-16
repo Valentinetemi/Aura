@@ -1,15 +1,18 @@
-// ── Aura Content Script ──
+// -- Aura Content Script --
 
 (function () {
   if (document.getElementById('aura-root')) return; // prevent double-inject
 
-  // ── Config (loaded from chrome.storage, set in popup) ──
-  // ── Config ──
+  // -- Config (loaded from chrome.storage, set in popup) --
+  // -- Config --
 const NOVA_API_URL = 'https://aura-ai.temiloluwa1402.workers.dev';
 const NOVA_API_KEY = '';
 
+ // -- conversation history --
+ let conversationHistory = []
+ let currentPageContent = '';
 
-  // ── Feature definitions ──
+  // -- Feature definitions --
   const FEATURES = [
     {
       action: 'summarize',
@@ -41,7 +44,7 @@ const NOVA_API_KEY = '';
     },
   ];
 
-  // ── Build DOM ──
+  // -- Build DOM --
   const root = document.createElement('div');
   root.id = 'aura-root';
 
@@ -155,36 +158,49 @@ fab.addEventListener('click', (e) => {
     return document.body.innerText.trim().slice(0, 4000);
   }
 
-  // ── Call Nova -- lol didn't later use nova but cloudfare
-  async function callNova(prompt) {
-    // Always read latest config from storage
-    const apiUrl = NOVA_API_URL;
-    const apiKey = NOVA_API_KEY;
+  // -- Call Nova -- lol didn't later use nova but cloudfare
 
-    if (!apiUrl) {
-      throw new Error('No API URL set. Click the Aura icon in the toolbar to configure.');
-    }
+async function callNova(prompt, isFollowUp = false) {
+  const apiUrl = NOVA_API_URL;
+  const apiKey = NOVA_API_KEY;
 
-    const response = await fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(apiKey ? { 'Authorization': `Bearer ${apiKey}` } : {}),
-      },
-      body: JSON.stringify({
-        message: prompt,
-        context: window.location.href,
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`API error ${response.status}: ${response.statusText}`);
-    }
-
-    const data = await response.json();
-
-    return data.response || data.message || data.text || data.content || JSON.stringify(data);
+  if (!apiUrl) {
+    throw new Error('No API URL set. Click the Aura icon in the toolbar to configure.');
   }
+
+  // Build messages array for chat
+  const messages = [
+    {
+      role: 'system',
+      content: `You are Aura, a helpful AI assistant embedded in a browser extension. The user is currently on: ${window.location.href}. Here is the page content for context:\n\n${currentPageContent}`
+    },
+    ...conversationHistory,
+    { role: 'user', content: prompt }
+  ];
+
+  const response = await fetch(apiUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(apiKey ? { 'Authorization': `Bearer ${apiKey}` } : {}),
+    },
+    body: JSON.stringify({ messages }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`API error ${response.status}: ${response.statusText}`);
+  }
+
+  const data = await response.json();
+  const output = data.response || data.message || data.text || data.content || JSON.stringify(data);
+
+  // Save to history
+  conversationHistory.push({ role: 'user', content: prompt });
+  conversationHistory.push({ role: 'assistant', content: output });
+
+  return output;
+}
+
 
   // ── Handle feature click ──
   root.querySelectorAll('.aura-action-btn').forEach(btn => {
@@ -210,6 +226,7 @@ fab.addEventListener('click', (e) => {
       // Get content & call API
       try {
         const pageContent = getPageContent();
+        conversationHistory = [];
         const prompt = feature.prompt(pageContent);
         const output = await callNova(prompt);
 
