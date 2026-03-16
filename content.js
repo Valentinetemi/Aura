@@ -179,6 +179,7 @@
     if (chatWrap) chatWrap.remove();
     conversationHistory = [];
     currentPageContent = '';
+  }
 
   // -- Get page content --
   function getPageContent() {
