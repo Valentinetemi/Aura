@@ -274,6 +274,81 @@ async function callNova(prompt, isFollowUp = false) {
     });
   });
 
+  // ── Chat input ──
+function showChatInput() {
+  // Remove existing chat input if any
+  const existing = root.querySelector('#aura-chat-input-wrap');
+  if (existing) existing.remove();
+
+  const wrap = document.createElement('div');
+  wrap.id = 'aura-chat-input-wrap';
+  wrap.innerHTML = `
+    <div id="aura-chat-box">
+      <input id="aura-chat-input" type="text" placeholder="Ask a follow-up..." />
+      <button id="aura-chat-send">↑</button>
+    </div>
+  `;
+
+  root.querySelector('#aura-panel-body').appendChild(wrap);
+
+  const input = wrap.querySelector('#aura-chat-input');
+  const sendBtn = wrap.querySelector('#aura-chat-send');
+
+  const send = () => {
+    const val = input.value.trim();
+    if (!val) return;
+    input.value = '';
+    handleFollowUp(val);
+  };
+
+  sendBtn.addEventListener('click', send);
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') send();
+  });
+}
+
+async function handleFollowUp(message) {
+  // Append user bubble
+  const body = root.querySelector('#aura-panel-body');
+  const userBubble = document.createElement('div');
+  userBubble.className = 'aura-chat-bubble aura-chat-user';
+  userBubble.textContent = message;
+  body.insertBefore(userBubble, root.querySelector('#aura-chat-input-wrap'));
+
+  // Append AI bubble with loading
+  const aiBubble = document.createElement('div');
+  aiBubble.className = 'aura-chat-bubble aura-chat-ai';
+  aiBubble.innerHTML = `<div class="aura-loading"><span></span><span></span><span></span></div>`;
+  body.insertBefore(aiBubble, root.querySelector('#aura-chat-input-wrap'));
+
+  // Scroll to bottom
+  body.scrollTop = body.scrollHeight;
+
+  try {
+    const output = await callNova(message, true);
+
+    // Stream into AI bubble
+    const words = output.split(' ');
+    let i = 0;
+    let revealed = '';
+    aiBubble.textContent = '';
+
+    const interval = setInterval(() => {
+      if (i >= words.length) {
+        clearInterval(interval);
+        aiBubble.innerHTML = formatOutput(output);
+        body.scrollTop = body.scrollHeight;
+        return;
+      }
+      revealed += (i === 0 ? '' : ' ') + words[i];
+      aiBubble.textContent = revealed;
+      i += 3;
+    }, 30);
+
+  } catch (err) {
+    aiBubble.innerHTML = `<span class="aura-error">⚠ ${escapeHtml(err.message)}</span>`;
+  }
+}
   // ── Helpers ──
   function escapeHtml(str) {
     return str
