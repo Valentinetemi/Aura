@@ -21,7 +21,7 @@ const NOVA_API_KEY = '';
     {
       action: 'explain',
       label: 'Explain Code',
-      icon: '⌥',
+      icon: '⚡',
       prompt: (content) =>
         `Explain the code on this page in simple, clear terms. Describe what it does, how it works, and any important patterns used..\n\n${content}`,
     },
