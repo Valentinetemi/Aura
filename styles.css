@@ -443,3 +443,93 @@
   margin-bottom: 12px;
   line-height: 1.5;
 }
+
+/* ── Action Row ── */
+.aura-action-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+#aura-save-btn {
+  padding: 7px 14px;
+  background: rgba(79, 255, 176, 0.1);
+  border: 1px solid rgba(79, 255, 176, 0.3);
+  border-radius: 8px;
+  color: #4fffb0;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+#aura-save-btn:hover {
+  background: rgba(79, 255, 176, 0.2);
+}
+
+/* ── Notes ── */
+.aura-note-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--aura-border);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.aura-note-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.aura-note-feature {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--aura-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.aura-note-date {
+  font-size: 11px;
+  color: var(--aura-muted);
+}
+
+.aura-note-content {
+  font-size: 12.5px;
+  color: var(--aura-text);
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+
+.aura-note-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.aura-note-copy, .aura-note-delete {
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.aura-note-copy {
+  background: rgba(124,107,255,0.15);
+  border: 1px solid rgba(124,107,255,0.3);
+  color: var(--aura-accent);
+}
+
+.aura-note-delete {
+  background: rgba(255,107,138,0.1);
+  border: 1px solid rgba(255,107,138,0.3);
+  color: #ff6b8a;
+}
+
+.aura-note-copy:hover { background: rgba(124,107,255,0.25); }
+.aura-note-delete:hover { background: rgba(255,107,138,0.2); }
