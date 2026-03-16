@@ -215,18 +215,40 @@ fab.addEventListener('click', (e) => {
         const output = await callNova(prompt);
 
         result.innerHTML = `
-          <div id="aura-result-text">${formatOutput(output)}</div>
-          <button id="aura-copy-btn">Copy</button>
-        `;
+  <div id="aura-result-text"></div>
+  <button id="aura-copy-btn" style="opacity:0">Copy</button>
+`;
 
-        root.querySelector('#aura-copy-btn').addEventListener('click', () => {
-          navigator.clipboard.writeText(output);
-          root.querySelector('#aura-copy-btn').textContent = 'Copied ✓';
-          setTimeout(() => {
-            const btn = root.querySelector('#aura-copy-btn');
-            if (btn) btn.textContent = 'Copy';
-          }, 2000);
-        });
+const textEl = result.querySelector('#aura-result-text');
+const copyBtn = result.querySelector('#aura-copy-btn');
+
+// Stream words in one by one
+const words = output.split(' ');
+let i = 0;
+let revealed = '';
+
+const interval = setInterval(() => {
+  if (i >= words.length) {
+    clearInterval(interval);
+    // Render final formatted version
+    textEl.innerHTML = formatOutput(output);
+    // Show copy button
+    copyBtn.style.opacity = '1';
+    copyBtn.style.transition = 'opacity 0.4s ease';
+    return;
+  }
+  revealed += (i === 0 ? '' : ' ') + words[i];
+  textEl.textContent = revealed;
+  i += 3; // reveal 3 words at a time — feels fast but smooth
+}, 30); // every 30ms
+
+copyBtn.addEventListener('click', () => {
+  navigator.clipboard.writeText(output);
+  copyBtn.textContent = 'Copied ✓';
+  setTimeout(() => {
+    if (copyBtn) copyBtn.textContent = 'Copy';
+  }, 2000);
+});
 
       } catch (err) {
         result.innerHTML = `
