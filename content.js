@@ -510,4 +510,52 @@ highlightBtn.addEventListener('click', () => {
     });
 });
 
+// ─ Notes Panel ─
+root.querySelector('#aura-notes-btn').addEventListener('click', () => {
+  savedNotes = JSON.parse(localStorage.getItem('aura-notes') || '[]');
+  panelTitle.textContent = 'My Notes';
+  menuOpen = false;
+  fab.classList.remove('open');
+  menu.classList.remove('visible');
+
+  if (savedNotes.length === 0) {
+    result.innerHTML = `<div style="color: var(--aura-muted); font-size: 13px;">No saved notes yet. Use the Save button after any response.</div>`;
+  } else {
+    result.innerHTML = savedNotes.map(note => `
+      <div class="aura-note-card" data-id="${note.id}">
+        <div class="aura-note-meta">
+          <span class="aura-note-feature">${escapeHtml(note.feature)}</span>
+          <span class="aura-note-date">${note.date}</span>
+        </div>
+        <div class="aura-note-content">${formatOutput(note.content.slice(0, 200))}${note.content.length > 200 ? '...' : ''}</div>
+        <div class="aura-note-actions">
+          <button class="aura-note-copy" data-id="${note.id}">Copy</button>
+          <button class="aura-note-delete" data-id="${note.id}">Delete</button>
+        </div>
+      </div>
+    `).join('');
+
+    // Copy note
+    result.querySelectorAll('.aura-note-copy').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const note = savedNotes.find(n => n.id == btn.dataset.id);
+        if (note) navigator.clipboard.writeText(note.content);
+        btn.textContent = 'Copied ✓';
+        setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+      });
+    });
+
+    // Delete note
+    result.querySelectorAll('.aura-note-delete').forEach(btn => {
+      btn.addEventListener('click', () => {
+        savedNotes = savedNotes.filter(n => n.id != btn.dataset.id);
+        localStorage.setItem('aura-notes', JSON.stringify(savedNotes));
+        btn.closest('.aura-note-card').remove();
+      });
+    });
+  }
+
+  panel.classList.add('visible');
+});
+
 })();
