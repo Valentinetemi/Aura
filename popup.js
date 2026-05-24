@@ -11,7 +11,7 @@ saveBtn.addEventListener('click', () => {
 
   if (!key) {
     saveStatus.style.color = '#ff6b8a';
-    saveStatus.textContent = 'Please enter your API key.';
+    saveStatus.textContent = 'AIzaSyALD2zPmVUff206mP3ShN3HqVTZaxO4Vug';
     return;
   }
 

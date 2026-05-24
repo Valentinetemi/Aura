@@ -4,7 +4,7 @@
   if (document.getElementById('aura-root')) return;
 
   // -- Config --
-  const GEMMA_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemma-3-27b-it:generateContent';
+  const GEMMA_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemma-4-31b-it:generateContent';
   let GEMMA_API_KEY = '';
 chrome.storage.sync.get(['gemmaApiKey'], (data) => {
   if (data.gemmaApiKey) GEMMA_API_KEY = data.gemmaApiKey;
