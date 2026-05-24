@@ -17,7 +17,7 @@ I got tired of being the workaround. So I built Aura.
 
 ## What Aura Is
 
-**Aura is a Chrome extension that puts Gemma 4 directly on every webpage.**
+*Aura is a Chrome extension that puts Gemma 4 directly on every webpage.*
 
 No tab switching. No copy-pasting. No context lost.
 
