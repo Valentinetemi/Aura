@@ -4,8 +4,7 @@
   if (document.getElementById('aura-root')) return;
 
   // -- Config --
-  const NOVA_API_URL = 'https://aura-ai.temiloluwa1402.workers.dev';
-  const NOVA_API_KEY = '';
+
 
   // -- State --
   let conversationHistory = [];
