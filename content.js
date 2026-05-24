@@ -4,7 +4,8 @@
   if (document.getElementById('aura-root')) return;
 
   // -- Config --
-
+  const GEMMA_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemma-3-27b-it:generateContent';
+  const GEMMA_API_KEY = 'YOUR_GEMINI_API_KEY_HERE';
 
   // -- State --
   let conversationHistory = [];
@@ -192,34 +193,42 @@
 
   // -- Call API --
   async function callNova(prompt) {
-    if (!NOVA_API_URL) throw new Error('No API URL set.');
-
     const messages = [
       {
-        role: 'system',
-        content: `You are Aura, a helpful AI assistant embedded in a browser extension. The user is on: ${window.location.href}. Page context:\n\n${currentPageContent}`
-      },
-      ...conversationHistory,
-      { role: 'user', content: prompt }
+        role: 'user',
+        parts: [{
+          text: `You are Aura, a helpful AI assistant embedded in a browser extension. The user is on: ${window.location.href}. Page context:\n\n${currentPageContent}\n\n${prompt}`
+        }]
+      }
     ];
-
-    const response = await fetch(NOVA_API_URL, {
+  
+    // inject conversation history
+    const history = [];
+    for (let i = 0; i < conversationHistory.length; i += 2) {
+      const userMsg = conversationHistory[i];
+      const aiMsg = conversationHistory[i + 1];
+      if (userMsg) history.push({ role: 'user', parts: [{ text: userMsg.content }] });
+      if (aiMsg) history.push({ role: 'model', parts: [{ text: aiMsg.content }] });
+    }
+  
+    const response = await fetch(`${GEMMA_API_URL}?key=${GEMMA_API_KEY}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ messages }),
+      body: JSON.stringify({
+        contents: [...history, ...messages]
+      }),
     });
-
+  
     if (!response.ok) throw new Error(`API error ${response.status}: ${response.statusText}`);
-
+  
     const data = await response.json();
-    const output = data.response || data.message || data.text || data.content || JSON.stringify(data);
-
+    const output = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response.';
+  
     conversationHistory.push({ role: 'user', content: prompt });
     conversationHistory.push({ role: 'assistant', content: output });
-
+  
     return output;
   }
-
   // -- Typing animation helper --
   function typeText(el, text, onDone) {
     const words = text.split(' ');
