@@ -5,10 +5,7 @@
 
   // -- Config --
   const GEMMA_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemma-4-31b-it:generateContent';
-  let GEMMA_API_KEY = '';
-chrome.storage.sync.get(['gemmaApiKey'], (data) => {
-  if (data.gemmaApiKey) GEMMA_API_KEY = data.gemmaApiKey;
-});
+  const GEMMA_API_KEY = '';
 
   // -- State --
   let conversationHistory = [];
@@ -22,7 +19,7 @@ chrome.storage.sync.get(['gemmaApiKey'], (data) => {
       label: 'Summarize Page',
       icon: '✦',
       prompt: (content) =>
-        `Summarize the following webpage content using bullet points for key takeaways. Go straight into the bullet points, no intro sentence.\n\n${content}`,
+        `Summarize this page in 3-4 short sentences. Be conversational and direct. No bullet points, no bold, no lists.\n\n${content}n\n${content}`,
     },
     {
       action: 'explain',
@@ -196,16 +193,18 @@ chrome.storage.sync.get(['gemmaApiKey'], (data) => {
 
   // -- Call API --
   async function callNova(prompt) {
-    const messages = [
-      {
-        role: 'user',
-        parts: [{
-          text: `You are Aura, a helpful AI assistant embedded in a browser extension. The user is on: ${window.location.href}. Page context:\n\n${currentPageContent}\n\n${prompt}`
-        }]
-      }
-    ];
+    const key = GEMMA_API_KEY;
   
-    // inject conversation history
+    const systemTurn = {
+      role: 'user',
+      parts: [{ text: `You are Aura, a helpful AI assistant in a browser extension. The user is on: ${window.location.href}. Page context:\n\n${currentPageContent}\n\nRespond concisely and directly. Never introduce yourself. Never mention you are an AI or browser extension. Format responses cleanly with proper bullet points and bold text where needed.` }]
+    };
+  
+    const systemAck = {
+      role: 'model',
+      parts: [{ text: 'Understood. Never show your reasoning, tasks, constraints, drafts, or self-checks. Output only the final answer.' }]
+    };
+  
     const history = [];
     for (let i = 0; i < conversationHistory.length; i += 2) {
       const userMsg = conversationHistory[i];
@@ -214,18 +213,44 @@ chrome.storage.sync.get(['gemmaApiKey'], (data) => {
       if (aiMsg) history.push({ role: 'model', parts: [{ text: aiMsg.content }] });
     }
   
-    const response = await fetch(`${GEMMA_API_URL}?key=${GEMMA_API_KEY}`, {
+    const messages = [{ role: 'user', parts: [{ text: prompt }] }];
+  
+    const response = await fetch(`${GEMMA_API_URL}?key=${key}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        contents: [...history, ...messages]
+        contents: [systemTurn, systemAck, ...history, ...messages]
       }),
     });
   
     if (!response.ok) throw new Error(`API error ${response.status}: ${response.statusText}`);
   
     const data = await response.json();
-    const output = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response.';
+    const rawOutput = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response.';
+
+    // Strip reasoning traces (tasks, constraints, drafts, self-checks)
+    let output = rawOutput;
+    const markers = ['Final Answer:', 'Final Response:', 'Answer:', 'Response:'];
+    let foundMarker = false;
+    for (const m of markers) {
+      if (output.includes(m)) {
+        output = output.split(m).pop().trim();
+        foundMarker = true;
+        break;
+      }
+    }
+
+    if (!foundMarker && output.includes('\n\n')) {
+      const blocks = output.split(/\n\n+/);
+      const kws = ['task', 'constraint', 'draft', 'check', 'reasoning', 'thought'];
+      let lastK = -1;
+      for (let i = 0; i < blocks.length; i++) {
+        if (kws.some(kw => blocks[i].toLowerCase().trim().startsWith(kw))) lastK = i;
+      }
+      if (lastK !== -1 && lastK < blocks.length - 1) {
+        output = blocks.slice(lastK + 1).join('\n\n').trim();
+      }
+    }
   
     conversationHistory.push({ role: 'user', content: prompt });
     conversationHistory.push({ role: 'assistant', content: output });
