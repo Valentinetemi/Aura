@@ -1,118 +1,168 @@
-🔮 Aura — Your AI Layer on Every Webpage
 
-«"Code is poetry. Ship the poem."»
+```markdown
+# 🔮 Aura — Your AI Layer on Every Webpage
 
-Aura is a Chrome extension that brings AI directly to every webpage you visit.
-
-No tab switching.
-No copy-pasting.
-No breaking your flow.
-
-Just click the floating orb and intelligent assistance appears — exactly where you already are.
+> *Every Time She Got Confused Online, She Called Me. I Got Tired of Answering. So I Built This.*
 
 ---
 
-✨ Features
+My cousin has a learning disability.
 
-✦ Summarize Page
+Not the kind people notice immediately. She holds a conversation fine. She laughs at the right moments. She is sharp in ways that matter.
 
-Instantly convert long articles, blogs, or documentation into clear bullet-point summaries.
+But put her in front of a dense webpage — a medical article, a GitHub README, a LinkedIn thread — and something shifts. The words blur. The structure overwhelms. She closes the tab and calls me.
 
-⚡ Explain Code
+For two years, I was her human filter for the internet.
 
-Reading GitHub or Stack Overflow? Aura explains complex code in simple, human language.
-
-↩ Draft Reply
-
-On LinkedIn or social platforms? Aura reads the conversation and drafts a professional reply.
-
-✐ Create Post
-
-Turn any webpage into two LinkedIn post ideas with hooks, insights, and calls to action.
-
-🖱 Highlight & Ask
-
-Highlight any text on a webpage → click Ask Aura → get an instant explanation.
-
-💬 Motivation Mode
-
-Rotating motivational quotes appear in the panel to keep you inspired while working.
-
-🔮 Draggable Orb
-
-Move the floating Aura button anywhere on your screen.
+I got tired of being the workaround. So I built Aura.
 
 ---
 
-🛠 Tech Stack
+## What Aura Is
 
-- JavaScript — Chrome extension logic
-- HTML + CSS — UI design
-- Cloudflare Workers AI — AI inference layer
-- Llama 3.1 8B — model powering responses
+**Aura is a Chrome extension that puts Gemma 4 directly on every webpage.**
 
-⚡ Lightweight
-⚡ No backend server
-⚡ Privacy-friendly (no data storage)
+No tab switching. No copy-pasting into ChatGPT. No context lost.
+
+Click the floating orb. A panel slides in. AI appears exactly where you already are.
 
 ---
 
- Installation
+## ✨ Features
 
-1. Clone this repository
-
-git clone https://github.com/Valentinetemi/aura-extension
-
-2. Open Chrome and go to:
-
-chrome://extensions/
-
-3. Enable Developer Mode (top-right toggle)
-
-4. Click Load unpacked
-
-5. Select the cloned Aura folder
-
-6. 🔮 Aura will now run on every webpage you visit.
+| Feature | What it does |
+|---|---|
+| ✦ **Summarize Page** | Converts any article, blog, or doc into clear key takeaways instantly |
+| ⚡ **Explain Code** | Explains code in human language — not just *what* it does but *why* |
+| ↩ **Draft Reply** | Reads the conversation tone and drafts a reply that actually fits |
+| ✐ **Create Post** | Turns any article into compelling LinkedIn post ideas |
+| 🔮 **Highlight & Ask** | Select any text on the page and ask Aura anything about it |
+| 📝 **My Notes** | Save any response and access it later across sessions |
 
 ---
 
-⚙️ Setup
+## 🎬 Demo
 
-1. Get your Cloudflare Workers AI API key from:
+[
 
-https://dash.cloudflare.com
+![Aura Demo](https://img.youtube.com/vi/EXh2Mg0vuyI/0.jpg)
 
-2. Add your API key to the extension config file.
-
-3. Reload the extension.
+](https://www.youtube.com/watch?v=EXh2Mg0vuyI)
 
 ---
 
- Hackathon
+## 🧠 Why Gemma 4 31B
 
-Built for the Airia AI Agents Hackathon
+Aura runs on **Gemma 4 31B Dense** via the Google Generative Language API.
 
-Track: Airia Everywhere
+Three Gemma 4 variants exist. I picked 31B deliberately.
 
-Aura demonstrates how AI agents can exist directly inside the browsing experience, helping users read, write, code, and learn without leaving the page.
+| Model | Why I didn't pick it |
+|---|---|
+| 2B / 4B | Too shallow for reasoning across complex, unpredictable content types |
+| 26B MoE | Efficient but inconsistent — routes tokens through specialized subnetworks |
+| **31B Dense** | ✅ Full parameter activation. Consistent quality. Every tab. Every content type. |
 
----
+Dense models activate all parameters for every token. Gemma 4 31B does not guess which expert to wake up. It brings everything it knows to every interaction — whether that is a GitHub README, a medical article, or a LinkedIn thread.
 
-👩🏾‍💻 Built By
-
-Temiloluwa Valentine
-
-- X: https://twitter.com/temivalentine_
-- LinkedIn: https://linkedin.com/in/temiloluwa-valentine
-- GitHub: https://github.com/Valentinetemi
+For a tool where the content changes every tab and the user cannot afford an inconsistent experience, that consistency is not optional.
 
 ---
 
-📄 License
+## 🛠 Tech Stack
 
-MIT License — feel free to use, modify, and build on this project.
+- **JavaScript, HTML, CSS** — no framework, no backend
+- **Gemma 4 31B** via Google Generative Language API
+- **Chrome Extensions Manifest V3**
+- **localStorage** for notes persistence
+- **chrome.storage.sync** for API key management
 
 ---
 
-Aura — wherever you read, write, code, or learn, AI is already there. 🔮
+## ⚙️ How It Works
+
+```javascript
+const GEMMA_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemma-4-31b-it:generateContent';
+
+async function callNova(prompt) {
+  const systemTurn = {
+    role: 'user',
+    parts: [{ text: `You are Aura, a helpful AI assistant in a browser extension. 
+    Page context:\n\n${currentPageContent}\n\n
+    Respond concisely. Never introduce yourself. Output only the final answer.` }]
+  };
+
+  const systemAck = {
+    role: 'model',
+    parts: [{ text: 'Understood.' }]
+  };
+
+  const response = await fetch(`${GEMMA_API_URL}?key=${GEMMA_API_KEY}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [systemTurn, systemAck, ...history, ...messages],
+      generationConfig: { temperature: 0.7 },
+      thinkingConfig: { thinkingBudget: 0 }
+    }),
+  });
+
+  const data = await response.json();
+  return data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response.';
+}
+```
+
+**Key implementation details:**
+
+- **System turn pattern** — Gemma 4 has no native system role. A user+model turn pair simulates it before the conversation starts
+- **`thinkingBudget: 0`** — suppresses Gemma 4's reasoning trace so only the final answer reaches the user
+- **Page extraction** — priority selector chain targeting `article`, `main`, `.content` before falling back to `document.body.innerText`, capped at 4000 characters
+- **Conversation memory** — full turn history injected into every request for follow-up chat support
+
+---
+
+## 🚀 Installation
+
+1. Clone this repo
+```bash
+git clone https://github.com/Valentinetemi/Aura.git
+```
+2. Open Chrome → go to `chrome://extensions`
+3. Enable **Developer Mode** (top right)
+4. Click **Load unpacked** → select the project folder
+5. Click the Aura icon in your toolbar → paste your Gemini API key → Save
+6. Visit any webpage → click the 🔮 orb
+
+---
+
+## 👥 Who This Is For
+
+- People with **dyslexia** who need content restructured instantly
+- People with **ADHD** who lose the thread switching tabs
+- **Non-native English speakers** navigating professional content
+- **Elderly users** overwhelmed by dense web pages
+- Anyone the internet was not designed for
+
+---
+
+## 🔭 What Is Next
+
+Multimodal support — sending page screenshots alongside text so Gemma 4 can reason about charts, diagrams, and images, not just words.
+
+My cousin once sent me a screenshot of a medical form she could not understand. I read it to her over the phone.
+
+Aura will eventually do that too.
+
+---
+
+## 🔗 Links
+
+- 🎬 **Demo:** https://www.youtube.com/watch?v=EXh2Mg0vuyI
+
+---
+
+> *"Code is poetry. Ship the poem."*
+
+Built by [Valentine Temi](https://github.com/Valentinetemi) 🔮
+
+```
