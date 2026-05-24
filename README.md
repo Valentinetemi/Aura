@@ -10,7 +10,7 @@ My cousin has a learning disability.
 
 Not the kind people notice immediately. She holds a conversation fine. She laughs at the right moments. She is sharp in ways that matter.
 
-But put her in front of a dense webpage — a medical article, a GitHub README, a LinkedIn thread — and something shifts. The words blur. The structure overwhelms. She closes the tab and calls me.
+But put her in front of a dense webpage, a medical article, a GitHub README, a LinkedIn thread and something shifts. The words blur. The structure overwhelms. She closes the tab and calls me.
 
 For two years, I was her human filter for the internet.
 
@@ -33,7 +33,7 @@ Click the floating orb. A panel slides in. AI appears exactly where you already 
 | Feature | What it does |
 |---|---|
 | ✦ **Summarize Page** | Converts any article, blog, or doc into clear key takeaways instantly |
-| ⚡ **Explain Code** | Explains code in human language — not just *what* it does but *why* |
+| ⚡ **Explain Code** | Explains code in human language not just *what* it does but *why* |
 | ↩ **Draft Reply** | Reads the conversation tone and drafts a reply that actually fits |
 | ✐ **Create Post** | Turns any article into compelling LinkedIn post ideas |
 | 🔮 **Highlight & Ask** | Select any text on the page and ask Aura anything about it |
@@ -162,7 +162,3 @@ Aura will eventually do that too.
 ---
 
 > *"Code is poetry. Ship the poem."*
-
-Built by [Valentine Temi](https://github.com/Valentinetemi) 🔮
-
-```
