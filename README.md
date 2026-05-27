@@ -13,7 +13,7 @@ But put her in front of a dense webpage — a medical article, a GitHub README, 
 
 For two years, I was her human filter for the internet.
 
-I got tired of being the workaround. So I built Aura.
+I got tired of being the workaround. So I built Aura
 
 ## What Aura Is
 
